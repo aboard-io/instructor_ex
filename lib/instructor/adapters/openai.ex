@@ -13,19 +13,19 @@ defmodule Instructor.Adapters.OpenAI do
     {_, params} = Keyword.pop(params, :validation_context)
     {_, params} = Keyword.pop(params, :max_retries)
     {_, params} = Keyword.pop(params, :mode)
+    {timeout, params} = Keyword.pop(params, :timeout, 5_000)
     stream = Keyword.get(params, :stream, false)
     params = Enum.into(params, %{})
 
     if stream do
-      do_streaming_chat_completion(params, config)
+      do_streaming_chat_completion(params, config, timeout)
     else
       do_chat_completion(params, config)
     end
   end
 
-  defp do_streaming_chat_completion(params, config) do
+  defp do_streaming_chat_completion(params, config, timeout) do
     pid = self()
-    timeout = task_timeout(params)
     options = http_options(config)
 
     Stream.resource(

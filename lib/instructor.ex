@@ -32,6 +32,7 @@ defmodule Instructor do
     * `:mode` - The mode to use when parsing the response, :tools, :json, :md_json (defaults to `:tools`), generally speaking you don't need to change this unless you are not using OpenAI.
     * `:max_retries` - The maximum number of times to retry the LLM call if it fails, or does not pass validations.
                        (defaults to `0`)
+    * `:timeout` - The timeout for the LLM call. (defaults to `5000`)
 
   ## Examples
 
