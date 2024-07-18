@@ -25,6 +25,7 @@ defmodule Instructor.Adapters.OpenAI do
 
   defp do_streaming_chat_completion(params, config) do
     pid = self()
+    timeout = task_timeout(params)
     options = http_options(config)
 
     Stream.resource(
@@ -76,7 +77,7 @@ defmodule Instructor.Adapters.OpenAI do
             {:halt, task}
         end
       end,
-      fn task -> Task.await(task) end
+      fn task -> Task.await(task, timeout) end
     )
   end
 
@@ -94,6 +95,7 @@ defmodule Instructor.Adapters.OpenAI do
   defp api_url(config), do: Keyword.fetch!(config, :api_url)
   defp api_key(config), do: Keyword.fetch!(config, :api_key)
   defp http_options(config), do: Keyword.fetch!(config, :http_options)
+  defp task_timeout(params), do: Map.get(params, :timeout, 5_000)
 
   defp config() do
     base_config = Application.get_env(:instructor, :openai, [])
