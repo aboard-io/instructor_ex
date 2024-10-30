@@ -14,6 +14,7 @@ defmodule Instructor.Adapters.Anthropic do
     {_, params} = Keyword.pop(params, :response_model)
     {_, params} = Keyword.pop(params, :validation_context)
     {_, params} = Keyword.pop(params, :max_retries)
+    {_, params} = Keyword.pop(params, :adapter)
     {mode, params} = Keyword.pop(params, :mode)
     stream = Keyword.get(params, :stream, false)
     params = Enum.into(params, %{})

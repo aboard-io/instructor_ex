@@ -284,7 +284,7 @@ defmodule Instructor do
         {%{}, response_model}
       end
 
-    adapter(config).chat_completion(params, config)
+    adapter(params).chat_completion(params, config)
     |> Instructor.JSONStreamParser.parse()
     |> Stream.transform(
       fn -> {nil, []} end,
@@ -346,7 +346,7 @@ defmodule Instructor do
     mode = Keyword.get(params, :mode, :tools)
     params = params_for_mode(mode, wrapped_model, params)
 
-    adapter(config).chat_completion(params, config)
+    adapter(params).chat_completion(params, config)
     |> Instructor.JSONStreamParser.parse()
     |> Stream.transform(
       fn -> nil end,
@@ -392,7 +392,7 @@ defmodule Instructor do
     mode = Keyword.get(params, :mode, :tools)
     params = params_for_mode(mode, wrapped_model, params)
 
-    adapter(config).chat_completion(params, config)
+    adapter(params).chat_completion(params, config)
     |> Jaxon.Stream.from_enumerable()
     |> Jaxon.Stream.query([:root, "value", :all])
     |> Stream.map(fn params ->
@@ -475,7 +475,7 @@ defmodule Instructor do
   end
 
   defp do_adapter_chat_completion(params, config) do
-    case adapter(config).chat_completion(params, config) do
+    case adapter(params).chat_completion(params, config) do
       {:ok, response, content} ->
         {:ok, response, content}
 
@@ -485,7 +485,7 @@ defmodule Instructor do
   end
 
   defp reask_messages(raw_response, params, config) do
-    adp = adapter(config)
+    adp = adapter(params)
 
     if function_exported?(adp, :reask_messages, 3) do
       adp.reask_messages(raw_response, params, config)
@@ -600,8 +600,8 @@ defmodule Instructor do
     end
   end
 
-  defp adapter(config) do
-    case config[:adapter] do
+  defp adapter(params) do
+    case Keyword.get(params, :adapter) do
       nil -> Application.get_env(:instructor, :adapter, Instructor.Adapters.OpenAI)
       adapter -> adapter
     end

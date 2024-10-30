@@ -11,4 +11,6 @@ defmodule Instructor.Adapter do
               Stream.t() | {:ok, raw_response(), String.t()} | {:error, String.t()}
 
   @callback reask_messages(raw_response(), params(), config()) :: [map()]
+
+  @optional_callbacks reask_messages: 3
 end
