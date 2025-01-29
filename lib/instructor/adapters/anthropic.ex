@@ -122,6 +122,9 @@ defmodule Instructor.Adapters.Anthropic do
     delta
   end
 
+  defp parse_response_for_mode(:tools, %{"content" => response}) when is_list(response) and length(response) > 1 do
+    Enum.map(response, &parse_response_for_mode(:tools, %{"content" => [&1]}))
+  end
   defp parse_response_for_mode(:tools, %{"content" => [%{"input" => args, "type" => "tool_use"}]}) do
     args
   end
